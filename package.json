@@ -2,21 +2,25 @@
   "name": "reactorbot-ts",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsup src/index.ts --minify"
+    "build": "tsc",
+    "buildrun": "tsc && node dist/index.js"
   },
   "author": "King-BR",
   "license": "MIT",
   "dependencies": {
     "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "terminal-kit": "^3.1.2"
   },
   "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/terminal-kit": "^2.5.7",
     "tsup": "^8.2.4",
     "tsx": "^4.16.5",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   }
 }
