@@ -37,7 +37,19 @@ export default {
                 .setColor(0x00AE86)
                 .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() })
                 .setImage('attachment://schematic.png')
-                .setTimestamp();
+                .setTimestamp()
+                // .addFields([{name: "Requer",}]);
+
+            const requires = schematic.getBuildCost();
+
+            if(requires.size > 0) {
+                const requireStrings: string[] = [];
+                requires.forEach((amount, blockName) => {
+                    const emoji = MindustrySchematicManager.itemToEmoji(blockName.name) || blockName.name;
+                    requireStrings.push(`${emoji}${amount}`);
+                });
+                embed.addFields({ name: "Requer", value: requireStrings.join(" ") });
+            }
 
             const btn = new ButtonBuilder()
                 .setCustomId('get_schematic_base64')
