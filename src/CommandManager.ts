@@ -16,19 +16,18 @@ export class CommandManager {
     static async deploy(guildId: string) {
         const commandsData = Array.from(this.commands.values()).map((command) => command.data);
         const rest = new REST({ version: "10" }).setToken(config.DISCORD_TOKEN);
+        if (typeof config.DISCORD_CLIENT_ID != "string") {
+          throw new Error("Missing environment variable DISCORD_CLIENT_ID");
+        }
+        
+        
         try {
-        
-          if (typeof config.DISCORD_CLIENT_ID != "string") {
-            throw new Error("Missing environment variable DISCORD_CLIENT_ID");
-          }
-        
           await rest.put(
             Routes.applicationGuildCommands(config.DISCORD_CLIENT_ID, guildId),
             {
               body: commandsData,
             }
           );
-        
         } catch (error) {
         }
     }

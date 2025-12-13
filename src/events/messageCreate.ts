@@ -46,7 +46,7 @@ export default {
             const row = new ActionRowBuilder<ButtonBuilder>()
                 .addComponents(btn);
 
-            console.log(schematic.unknownBlocksNames);
+            // console.log(schematic.unknownBlocksNames);
 
             message.channel.send({
                 embeds: [embed], files: [
