@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, Partials } from "discord.js";
 import { config } from "./config";
 import fs from "fs";
 import { MultiProgressBar } from "./TerminalKitPlus";
@@ -10,7 +10,10 @@ type defaultModule<T> = { __esModule: boolean, default: { default: T } };
 
 export class Loader {
     static client = new Client({
-        intents: ["Guilds", "GuildMessages", "DirectMessages"],
+        intents: ["Guilds", "GuildMessages", "DirectMessages", "MessageContent"],
+        partials: [
+            Partials.Channel
+        ]
     });
 
     static load(): void {
@@ -32,7 +35,7 @@ export class Loader {
             totalCommands: commandFiles.length,
         };
 
-        Loader.LoadMethods(eventFiles, client, LoadingStatus, eventProgress);
+        Loader.LoadEvents(eventFiles, client, LoadingStatus, eventProgress);
         Loader.LoadCommands(commandFiles, LoadingStatus, eventProgress);
 
         eventProgress.onComplete = () => {
@@ -54,7 +57,7 @@ export class Loader {
         }
     }
 
-    private static LoadMethods(eventFiles: string[], client: Client<boolean>, LoadingStatus: { eventsLoaded: number; commandsLoaded: number; totalEvents: number; totalCommands: number; }, eventProgress: MultiProgressBar) {
+    private static LoadEvents(eventFiles: string[], client: Client<boolean>, LoadingStatus: { eventsLoaded: number; commandsLoaded: number; totalEvents: number; totalCommands: number; }, eventProgress: MultiProgressBar) {
         for (const eFile of eventFiles) {
             const imported = import(`./events/${eFile}`);
             imported.then((eventModule: defaultModule<AllEventReturner>) => {
@@ -62,9 +65,9 @@ export class Loader {
                 let fn = event.once ? client.once : client.on;
 
 
-                fn.call(client, event.name, (...args) => {
+                fn.call(client, event.name, async (...args) => {
                     try {
-                        (event.execute as any)(...args);
+                        await (event.execute as any)(...args);
                     } catch (error) {
                         console.error(`Error executing event ${event.name}:`, error);
                     }
@@ -73,5 +76,10 @@ export class Loader {
                 eventProgress.update("Eventos", eventsLoaded / LoadingStatus.totalEvents);
             });
         }
+    }
+
+    static async reload() {
+        await this.client.destroy();
+        this.load();
     }
 }

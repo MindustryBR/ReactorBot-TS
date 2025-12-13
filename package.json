@@ -4,23 +4,22 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
     "build": "tsc",
     "buildrun": "tsc && node dist/index.js"
   },
   "author": "King-BR",
   "license": "MIT",
   "dependencies": {
+    "canvas": "^3.2.0",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
+    "mindustry-schematic": "github:Alstin112/mindustry-schematic",
     "terminal-kit": "^3.1.2"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
     "@types/terminal-kit": "^2.5.7",
-    "tsup": "^8.2.4",
-    "tsx": "^4.16.5",
     "typescript": "^5.9.3"
   }
 }
