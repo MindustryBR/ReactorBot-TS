@@ -12,11 +12,14 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copia só package.json primeiro (cache)
-COPY bot/package*.json ./
-RUN npm install
+# Copia package.json primeiro (cache)
+COPY package*.json ./
+RUN npm ci
 
 # Copia o resto
-COPY bot .
+COPY . .
 
-CMD ["npm", "run", "start"]
+# Compila TS → dist
+RUN npm run build
+
+CMD ["node", "dist/index.js"]

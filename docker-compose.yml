@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  discord-bot:
+  reactorbot:
+    container_name: reactorbot
     build: .
-    container_name: discord-bot
     restart: unless-stopped
     env_file:
-      - bot/.env
+      - .env
