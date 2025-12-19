@@ -1,4 +1,4 @@
-import { CommandManager } from "../CommandManager";
+import { CommandManager } from "../Initialization/CommandManager";
 import type { AllEventReturner } from "../types";
 import { terminal as t } from "terminal-kit";
 

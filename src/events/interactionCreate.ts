@@ -1,5 +1,5 @@
-import { CommandManager } from "../CommandManager";
-import { Loader} from "../Loader";
+import { CommandManager } from "../Initialization/CommandManager";
+import { Loader} from "../Initialization/Loader";
 import type { AllEventReturner } from "../types";
 import { terminal as t } from "terminal-kit";
 

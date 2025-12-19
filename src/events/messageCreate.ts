@@ -1,14 +1,32 @@
 import type { AllEventReturner } from "../types";
-import { Loader } from "../Loader";
+import { Loader } from "../Initialization/Loader";
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from "discord.js";
 import { MindustrySchematicManager } from "../MindustrySchematicManager";
 import { terminal as t } from "terminal-kit";
+import { MindustryCommunityServers } from "../Initialization/MindustryCommunityServers";
 const { client } = Loader;
 
 export default {
     name: "messageCreate",
     async execute(message) {
         if (message.author.bot) return;
+
+        const server = Array.from(MindustryCommunityServers.CommunityServers.values()).find(s => s.channelid === message.channel.id);
+        if (server) {
+            if(message.content === "!ip") {
+                message.channel.send(`O IP do servidor comunitário é: \`${server.address}\``);
+            }
+
+            const cachedMessages = MindustryCommunityServers.channelMessageCache.get(server.channelid) || [];
+            cachedMessages.push({
+                user: message.author.id,
+                username: message.author.username,
+                content: message.content,
+                timestamp: message.createdTimestamp,
+            });
+            MindustryCommunityServers.channelMessageCache.set(server.channelid, cachedMessages);
+            return;
+        }
 
         const content = message.content;
         let buffer = null;
@@ -49,6 +67,11 @@ export default {
                     requireStrings.push(`${emoji}${amount}`);
                 });
                 embed.addFields({ name: "Requer", value: requireStrings.join(" ") });
+            }
+
+            const powerGroups = schematic.getPowerGroupBuildings();
+            if(powerGroups.length > 0) {
+                embed.addFields({ name: "Grupos de energia", value: `${powerGroups.length}` });
             }
 
             const btn = new ButtonBuilder()

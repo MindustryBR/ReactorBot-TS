@@ -1,6 +1,6 @@
 import { Emoji } from "discord.js";
-import {Schematic} from "mindustry-schematic"
-import {vanillaSchematicAddon} from "mindustry-schematic/vanilla-addon"
+import { Schematic } from "mindustry-schematic"
+import { vanillaSchematicAddon } from "mindustry-schematic/vanilla-addon"
 
 export class MindustrySchematicManager {
 

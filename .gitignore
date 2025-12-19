@@ -1,3 +1,9 @@
 node_modules/
 .env
 dist/
+
+/src/generated/prisma
+prisma/migrations/
+data/
+*.sqlite
+*.db

@@ -11,15 +11,22 @@
   "author": "King-BR",
   "license": "MIT",
   "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.2.0",
+    "@prisma/client": "^7.2.0",
     "canvas": "^3.2.0",
     "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
     "mindustry-schematic": "github:Alstin112/mindustry-schematic",
     "terminal-kit": "^3.1.2"
   },
   "devDependencies": {
-    "@types/node": "^24.10.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.4",
     "@types/terminal-kit": "^2.5.7",
+    "prisma": "^7.2.0",
     "typescript": "^5.9.3"
   }
 }

@@ -1,0 +1,21 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Test {
+  id Int @id @default(autoincrement())
+}
+
+model CommunityServer {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  address   String   // O endereço do servidor (ex: localhost:4000)
+  authorId  String   // ID do usuário do Discord
+  channelId String   // ID do canal do Discord onde as mensagens caem
+  createdAt DateTime @default(now())
+  active    Boolean  @default(true)
+}

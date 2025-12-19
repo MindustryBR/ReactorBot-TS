@@ -1,6 +1,7 @@
-import { CommandReturner } from "./types";
+import { CommandReturner } from "./../types";
 import { REST, Routes } from "discord.js";
-import { config } from "./config";
+import { config } from "./../config";
+import { Loader } from "./Loader";
 
 export class CommandManager {
     static commands: Map<string, CommandReturner> = new Map();
@@ -16,14 +17,10 @@ export class CommandManager {
     static async deploy(guildId: string) {
         const commandsData = Array.from(this.commands.values()).map((command) => command.data);
         const rest = new REST({ version: "10" }).setToken(config.DISCORD_TOKEN);
-        if (typeof config.DISCORD_CLIENT_ID != "string") {
-          throw new Error("Missing environment variable DISCORD_CLIENT_ID");
-        }
-        
         
         try {
           await rest.put(
-            Routes.applicationGuildCommands(config.DISCORD_CLIENT_ID, guildId),
+            Routes.applicationGuildCommands(Loader.ReactorBotId, guildId),
             {
               body: commandsData,
             }
