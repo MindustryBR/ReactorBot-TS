@@ -5,6 +5,8 @@ services:
     container_name: reactorbot
     build: .
     restart: unless-stopped
+    ports:
+      - "4000:4000"
     env_file:
       - .env
     volumes:
