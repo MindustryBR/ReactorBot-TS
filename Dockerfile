@@ -19,6 +19,8 @@ RUN npm ci
 # Copia o resto
 COPY . .
 
+# Atualiza mindustry-schematic
+RUN npm update mindustry-schematic
 # Compila TS → dist
 RUN npm run build
 
