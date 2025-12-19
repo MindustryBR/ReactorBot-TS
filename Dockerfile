@@ -19,10 +19,11 @@ RUN npm ci
 # Copia o resto
 COPY . .
 
-# Atualiza mindustry-schematic
-RUN npm update mindustry-schematic
-RUN npx prisma generate
+# Força a atualização do pacote do GitHub especificamente
+# e gera o Prisma Client logo em seguida
+RUN npm update mindustry-schematic && npx prisma generate
+
 # Compila TS → dist
 RUN npm run build
 
-CMD ["node", "dist/index.js"]
+CMD npx prisma db push && node dist/index.js
