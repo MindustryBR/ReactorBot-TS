@@ -21,6 +21,8 @@ export default {
       interaction.options.getString("endereço", true),
       interaction.options.getUser("autor", true),
       interaction.channel
-    );
+    ).then(responseMessage => {
+      interaction.reply({ content: responseMessage, ephemeral: true });
+    });
   }
 } as CommandReturner;

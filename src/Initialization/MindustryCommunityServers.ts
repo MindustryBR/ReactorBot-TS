@@ -101,13 +101,12 @@ export class MindustryCommunityServers {
         return server;
     }
 
-    static async addCommunityServer(adressandport: string, author: User, channel: TextChannel) {
-        if (!this.started) return false;
+    static async addCommunityServer(adressandport: string, author: User, channel: TextChannel): Promise<string> {
+        if (!this.started) return "O sistema de servidores comunitários não foi iniciado.";
         try {
             await promisify(dns.lookup);
         } catch (error) {
-            channel.send("Endereço inválido fornecido para o servidor comunitário.");
-            return;
+            return "Endereço inválido fornecido para o servidor comunitário.";
         }
         
         
@@ -126,8 +125,9 @@ export class MindustryCommunityServers {
 
         this.CommunityServers.set(server.token, server);
         this.channelMessageCache.set(server.channelid, []);
-        author.send("Seu servidor comunitário foi adicionado!\nEnvie o comando no terminal:\n```discordconnect " + config.MINDUSTRY_COMMUNITY_ADDRESS + " " + server.token + "\n*NÃO COMPARTILHE ESTE TOKEN*```");
+        author.send("Seu servidor comunitário foi adicionado!\nEnvie o comando no terminal:\n```discordconnect " + config.MINDUSTRY_COMMUNITY_ADDRESS + " " + server.token + "```\n*NÃO COMPARTILHE ESTE TOKEN*");
         DatabaseManager.registerServer(server);
+        return "Esperando conexão do servidor comunitário...";
     }
 
     static setChannelMaster(channel: TextChannel, user: User | null) {
