@@ -139,12 +139,12 @@ export class MindustryCommunityServers {
             }, {
                 id: '699823229354639471',
                 // Com everyone vendo
-                // deny: 7882247193636880n,
-                // allow: 633456136932417n
+                deny: 7882247193636880n,
+                allow: 633456136932417n
 
                 // Sem everyone ver
-                deny: 7882247193637904n,
-                allow: 633456136931393n
+                // deny: 7882247193637904n,
+                // allow: 633456136931393n
             }, {
                 id: '755665930159390721',
                 deny: 2048n,
