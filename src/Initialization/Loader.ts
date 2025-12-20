@@ -17,8 +17,6 @@ export class Loader {
     });
     
     static readonly InviteLink = "https://discord.gg/Rt5HjqW";
-    static readonly ReactorBotId = "699824957118611569";
-    static readonly MindustryBrId = "699823229354639471"; 
 
     static load(): void {
         const client = this.client;

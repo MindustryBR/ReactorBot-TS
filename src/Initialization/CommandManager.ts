@@ -20,7 +20,7 @@ export class CommandManager {
         
         try {
           await rest.put(
-            Routes.applicationGuildCommands(Loader.ReactorBotId, guildId),
+            Routes.applicationGuildCommands(config.REACTOR_BOT_ID, guildId),
             {
               body: commandsData,
             }
