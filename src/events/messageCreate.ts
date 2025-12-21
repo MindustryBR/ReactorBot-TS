@@ -13,16 +13,14 @@ export default {
 
         const server = Array.from(MindustryCommunityServers.CommunityServers.values()).find(s => s.channelid === message.channel.id);
         if (server) {
-            if(message.content === "!ip") {
-                message.channel.send(`O IP do servidor comunitário é: \`${server.address}\``);
-            }
-
             const cachedMessages = MindustryCommunityServers.channelMessageCache.get(server.channelid) || [];
             cachedMessages.push({
-                user: message.author.id,
-                username: message.author.username,
+                author: message.author.username,
+                authorId: message.author.id,
                 content: message.content,
                 timestamp: message.createdTimestamp,
+                id: message.id,
+                authorIconUrl: message.author.displayAvatarURL(),
             });
             MindustryCommunityServers.channelMessageCache.set(server.channelid, cachedMessages);
             return;

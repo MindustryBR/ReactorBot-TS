@@ -1,7 +1,7 @@
 import { CommandReturner } from "./../types";
 import { REST, Routes } from "discord.js";
 import { config } from "./../config";
-import { Loader } from "./Loader";
+import { terminal as t } from "terminal-kit";
 
 export class CommandManager {
     static commands: Map<string, CommandReturner> = new Map();
@@ -26,6 +26,7 @@ export class CommandManager {
             }
           );
         } catch (error) {
+          t.red("Error deploying commands to guild:", guildId);
         }
     }
 }

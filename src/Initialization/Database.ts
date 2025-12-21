@@ -12,7 +12,7 @@ export class DatabaseManager {
     static async connect() {
         try {
             await this.prisma.$connect();
-            t.green("Database connected successfully.");
+            t.green("Database connected successfully.\n");
             this.active = true;
         } catch (error) {
             console.error("Error connecting to the database:", error);
@@ -22,7 +22,7 @@ export class DatabaseManager {
     static async disconnect() {
         try {
             await this.prisma.$disconnect();
-            console.log("Database disconnected successfully.");
+            t.green("Database disconnected successfully.\n");
             this.active = false;
         } catch (error) {
             console.error("Error disconnecting from the database:", error);

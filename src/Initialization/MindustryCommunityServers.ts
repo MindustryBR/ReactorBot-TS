@@ -30,10 +30,12 @@ export class MindustryCommunityServers {
     static started: boolean = false;
     static CommunityServers: Map<string, CommunityServerConnection> = new Map();
     static channelMessageCache = new Map<string, {
-        user: string;
-        username: string;
+        author: string;
+        authorId: string;
         content: string;
         timestamp: number;
+        id: string;
+        authorIconUrl: string;
     }[]>();
 
     static readonly CommunityOwnerAllowOverwrites = 7388872757865553n;
@@ -66,13 +68,14 @@ export class MindustryCommunityServers {
             if (!server) return res.sendStatus(403);
 
             try {
-                const { content, embeds, files, reply, flags } = req.body;
+                const { content, embeds, files, reply, flags } = this.filterBody(req.body);
                 if (!content && !embeds && !files) return res.sendStatus(400);
-                const filteredContent = this.filterContent(content);
                 const channel = Loader.client.channels.cache.get(server.channelid) as TextChannel;
-                if (content) await channel.send({ content: filteredContent, embeds, files, reply, flags });
+                const messageOptions = { content, embeds, files, reply, flags };
+                await channel.send(messageOptions);
                 res.sendStatus(200);
             } catch (error) {
+                console.log(error)
                 res.sendStatus(500);
             }
         });
@@ -94,8 +97,23 @@ export class MindustryCommunityServers {
         });
         this.started = true;
     }
+    static filterBody(body: any): any {
+        let files: unknown;
+        if ("files" in body) {
+            files = body["files"];
+        }
 
-    static filterContent(content: string): string {
+        body = JSON.parse(JSON.stringify(body), (key, value) => {
+            if (typeof value === 'string') {
+                return this.filterString(value);
+            }
+            return value;
+        });
+        if (files) (body as { files?: unknown })["files"] = files;
+        return body;
+    }
+
+    static filterString(content: string): string {
         return content.replace(/@everyone/g, "@\u00AD­­everyone").replace(/@here/g, "@\u00ADhere");
     }
 
@@ -131,7 +149,12 @@ export class MindustryCommunityServers {
 
         this.CommunityServers.set(server.token, server);
         this.channelMessageCache.set(server.channelid, []);
-        author.send("Seu servidor comunitário foi adicionado!\nEnvie o comando no terminal:\n```discordconnect " + config.MINDUSTRY_COMMUNITY_ADDRESS + " " + server.token + "```\n*NÃO COMPARTILHE ESTE TOKEN*");
+        author.send(
+            `Seu servidor comunitário foi adicionado!
+            Envie o comando no terminal:
+            \`\`\`discordconnect ${config.MINDUSTRY_COMMUNITY_ADDRESS} ${server.token} ${server.address}\`\`\`
+            *NÃO COMPARTILHE ESTE TOKEN*`
+        );
         DatabaseManager.registerServer(server);
         return "Esperando conexão do servidor comunitário...";
     }
@@ -158,18 +181,18 @@ export class MindustryCommunityServers {
             }
         ];
         try {
-        if (!user) {
-            if (channel.permissionOverwrites.cache.size === fixedOverwrites.length) return;
-            await channel.permissionOverwrites.set(fixedOverwrites);
-            return;
-        }
-        if (channel.permissionOverwrites.cache.get(user.id)) return;
-        await channel.permissionOverwrites.set([...fixedOverwrites, {
-            id: user.id,
-            allow: this.CommunityOwnerAllowOverwrites,
-            deny: this.CommunityOwnerDenyOverwrites,
-        }])
-        } catch (error) {}
+            if (!user) {
+                if (channel.permissionOverwrites.cache.size === fixedOverwrites.length) return;
+                await channel.permissionOverwrites.set(fixedOverwrites);
+                return;
+            }
+            if (channel.permissionOverwrites.cache.get(user.id)) return;
+            await channel.permissionOverwrites.set([...fixedOverwrites, {
+                id: user.id,
+                allow: this.CommunityOwnerAllowOverwrites,
+                deny: this.CommunityOwnerDenyOverwrites,
+            }])
+        } catch (error) { }
     }
 
     static removeCommunityServer(oldServer: CommunityServerConnection) {
