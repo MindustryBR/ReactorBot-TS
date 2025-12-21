@@ -21,7 +21,7 @@ const limiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
 });
-    
+
 // adicionar uma database
 // testar o sistema de verificação de texto
 // fixar o canal dar permissão para todomundo ler
@@ -58,17 +58,23 @@ export class MindustryCommunityServers {
         });
 
         const app = express();
-        app.use(express.json());
+        app.use(express.json({ limit: '100kb', strict: true }));
         app.use(limiter);
         app.set('trust proxy', 1)
-        app.post("/send", (req, res) => {
+        app.post("/send", async (req, res) => {
             const server = this.getConnection(req);
             if (!server) return res.sendStatus(403);
-            const { content } = req.body;
-            const filteredContent = this.filterContent(content);
-            const channel = Loader.client.channels.cache.get(server.channelid) as TextChannel;
-            if (content) channel.send(filteredContent);
-            res.sendStatus(200);
+
+            try {
+                const { content, embeds, files, reply, flags } = req.body;
+                if (!content && !embeds && !files) return res.sendStatus(400);
+                const filteredContent = this.filterContent(content);
+                const channel = Loader.client.channels.cache.get(server.channelid) as TextChannel;
+                if (content) await channel.send({ content: filteredContent, embeds, files, reply, flags });
+                res.sendStatus(200);
+            } catch (error) {
+                res.sendStatus(500);
+            }
         });
         app.post("/sync", (req, res) => {
             const server = this.getConnection(req);
@@ -108,14 +114,14 @@ export class MindustryCommunityServers {
         } catch (error) {
             return "Endereço inválido fornecido para o servidor comunitário.";
         }
-        
-        
+
+
         this.setChannelMaster(channel, author);
         const oldServerSameAddress = Array.from(this.CommunityServers.values()).find(s => s.address === adressandport);
         if (oldServerSameAddress && oldServerSameAddress.channelid !== channel.id) {
             this.removeCommunityServer(oldServerSameAddress);
         }
-        
+
         const server: CommunityServerConnection = {
             address: adressandport,
             token: crypto.randomUUID(),
@@ -130,7 +136,7 @@ export class MindustryCommunityServers {
         return "Esperando conexão do servidor comunitário...";
     }
 
-    static setChannelMaster(channel: TextChannel, user: User | null) {
+    static async setChannelMaster(channel: TextChannel, user: User | null) {
         const fixedOverwrites = [
             {
                 id: '700183808783286372',
@@ -151,18 +157,19 @@ export class MindustryCommunityServers {
                 allow: 0n
             }
         ];
-
+        try {
         if (!user) {
             if (channel.permissionOverwrites.cache.size === fixedOverwrites.length) return;
-            channel.permissionOverwrites.set(fixedOverwrites);
+            await channel.permissionOverwrites.set(fixedOverwrites);
             return;
         }
         if (channel.permissionOverwrites.cache.get(user.id)) return;
-        channel.permissionOverwrites.set([...fixedOverwrites, {
+        await channel.permissionOverwrites.set([...fixedOverwrites, {
             id: user.id,
             allow: this.CommunityOwnerAllowOverwrites,
             deny: this.CommunityOwnerDenyOverwrites,
         }])
+        } catch (error) {}
     }
 
     static removeCommunityServer(oldServer: CommunityServerConnection) {
